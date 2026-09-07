@@ -1,6 +1,24 @@
-adaptation-sony-pdx206 (0.0.1+git20250727064840.c479d68.trixie) trixie; urgency=medium
+adaptation-sony-pdx206 (0.0.1+git20260802123049.cc4b9e3.release) trixie; urgency=medium
 
+  [ ArchieMeng ]
+  * Add changelogs and workflows
+  * Update deployment action versions
+  * Add public key
+  * Update build workflow
+  * Add release step in build workflow
+  * Use debian/changelog tag for release name
   * keyrings: Update public key
+  * changelog: Bump version to 20250727
+  * Update public key
 
- -- ArchieMeng <archiemeng@protonmail.com>  Sun, 27 Jul 2025 14:48:40 +0800
+  [ Peter Cai ]
+  * Initial commit
+  * Add gitignore
+  * Fix permissions
+  * Add phosh/phoc adaptations for lower scaling factor
+  * Set phosh default scaling factor to 2.9
+  * Create /mnt/idd and /mnt/rca for sony iddd daemon
+  * Enable FDE
+
+ -- ArchieMeng <archiemeng@protonmail.com>  Sun, 02 Aug 2026 20:30:49 +0800
 
