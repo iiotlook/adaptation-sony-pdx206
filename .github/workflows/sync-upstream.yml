@@ -1,0 +1,45 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # 每天 00:00 UTC 检查上游更新
+  workflow_dispatch:      # 支持手动一键触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout trixie branch
+        uses: actions/checkout@v4
+        with:
+          ref: trixie
+          fetch-depth: 0
+
+      - name: Fetch and merge upstream
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git remote add upstream https://github.com/ArchieMeng/adaptation-sony-pdx206.git || true
+          git fetch upstream trixie
+
+          BEHIND=$(git rev-list --count HEAD..upstream/trixie)
+          echo "Upstream is ahead by ${BEHIND} commit(s)."
+
+          if [ "${BEHIND}" -gt 0 ]; then
+            echo "Merging upstream/trixie..."
+            # 使用 ort 策略，如果遇到上游对已删除的 archiemeng-custom.gpg 的修改，确保不恢复该文件
+            git merge upstream/trixie -m "ci: sync upstream ArchieMeng/adaptation-sony-pdx206" || {
+              if [ -f usr/share/keyrings/archiemeng-custom.gpg ]; then
+                git rm usr/share/keyrings/archiemeng-custom.gpg
+              fi
+              git commit -m "ci: sync upstream ArchieMeng/adaptation-sony-pdx206 (keep iiotlook keyring)"
+            }
+            git push origin trixie
+            echo "Synced successfully and pushed to origin/trixie."
+          else
+            echo "Already up-to-date with upstream."
+          fi
